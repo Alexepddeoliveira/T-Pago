@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %}
+{% load form_extras %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm p-4">
+            <h2 class="mb-4 text-center">Crie sua conta</h2>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Erro:</strong>
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Usuário</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_senha" class="form-label">Senha</label>
+                    {{ form.senha|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tipo de conta</label>
+                    <div class="form-check">
+                        {{ form.tipo_usuario.0.tag }} <label class="form-check-label">Evento</label>
+                    </div>
+                    <div class="form-check">
+                        {{ form.tipo_usuario.1.tag }} <label class="form-check-label">Cliente</label>
+                    </div>
+                </div>
+
+                <!-- CAMPO CONDICIONAL DE NOME FANTASIA -->
+                <div class="mb-3" id="div-nome-empresa" style="display: none;">
+                    <label for="id_nome_fantasia" class="form-label">Nome do Evento</label>
+                    {{ form.nome_fantasia|add_class:"form-control" }}
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Cadastrar</button>
+            </form>
+
+            <p class="mt-3 text-center">
+                Já tem uma conta? <a href="{% url 'login' %}">Faça login aqui</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- JS para mostrar/esconder o campo "Nome do Evento" -->
+<script>
+    const radios = document.getElementsByName('tipo_usuario');
+    const nomeEmpresaDiv = document.getElementById('div-nome-empresa');
+
+    function toggleEmpresaField() {
+        const selecionado = Array.from(radios).find(r => r.checked)?.value;
+        nomeEmpresaDiv.style.display = (selecionado === 'empresa') ? 'block' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', toggleEmpresaField));
+    toggleEmpresaField();
+</script>
+{% endblock %}

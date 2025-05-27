@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block title %}Editar Empresa{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Editar Informações da Empresa</h2>
+
+<form method="POST" class="card p-4 shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+</form>
+
+<a href="{% url 'listar_itens' %}" class="btn btn-link mt-3">← Voltar</a>
+{% endblock %}

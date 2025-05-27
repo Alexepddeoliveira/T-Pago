@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Adicionar Item{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Adicionar Novo Item ao Cardápio do Evento</h2>
+<form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+<a href="{% url 'listar_itens' %}" class="btn btn-link mt-3">Ver Itens</a>
+{% endblock %}

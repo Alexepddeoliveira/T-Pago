@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Cardápio{% endblock %}</title>
+    <link rel="icon" href="{% static 'ta-pago-logo.ico' %}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilo customizado -->
+    <style>
+        .custom-navbar {
+            background-color: rgb(35, 3, 46) !important;
+        }
+
+        .usuario-nome-grande {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'cliente_home' %}">
+                <img src="{% static 'img/ta-pago-logo.png' %}" alt="TaPago Logo" width="30" height="30" class="d-inline-block align-top">
+                
+                {% if user.is_authenticated and user.empresa %}
+                    Meu Cardápio
+                {% elif user.is_authenticated %}
+                    Eventos
+                {% else %}
+                    Cardápio
+                {% endif %}
+            </a>
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated and user.empresa %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'listar_itens' %}">Meus Itens</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'adicionar_item' %}">Adicionar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pedidos_recebidos' %}">📬 Caixa de Pedidos</a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <!-- PERFIL DROPDOWN -->
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle usuario-nome-grande" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.empresa %}
+                                    {{ user.empresa.nome_fantasia }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
+                                {% if user.empresa %}
+                                    <li><a class="dropdown-item" href="{% url 'listar_itens' %}">Meus Itens</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'pedidos_recebidos' %}">Pedidos Recebidos</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'editar_empresa' %}">Editar Perfil</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'ver_carrinho' %}">Meu Carrinho</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'cliente_home' %}">Empresas</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Sair</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Entrar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'registro' %}" class="btn btn-success btn-sm">Cadastrar</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Eventos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Eventos disponíveis</h2>
+
+<div class="row">
+    {% for empresa in empresas %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ empresa.nome_fantasia }}</h5>
+                    <a href="{% url 'ver_cardapio' empresa.id %}" class="btn text-white" style="background-color: #cb6cec;">
+                        Ver cardápio
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Nenhum evento cadastrado.</p>
+    {% endfor %}
+</div>
+{% endblock %}

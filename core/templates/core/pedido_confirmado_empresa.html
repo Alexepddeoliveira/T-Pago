@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+{% block title %}Verificação do Pedido{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    {% if confirmado %}
+        <div class="alert alert-success">Pedido marcado como <strong>retirado</strong> com sucesso.</div>
+    {% endif %}
+
+    <h2 class="mb-4">Pedido de {{ pedido.cliente.username }}</h2>
+    <p><strong>Data:</strong> {{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
+    <p><strong>Código:</strong> {{ pedido.codigo }}</p>
+
+    <!-- Botão copiar link -->
+    <div class="mt-4">
+        <label for="linkPedido"><strong>Link do pedido:</strong></label>
+        <input type="text" id="linkPedido" class="form-control" value="{{ request.build_absolute_uri }}" readonly>
+        <button class="btn btn-secondary mt-2" onclick="copiarLink()">Copiar Link</button>
+    </div>
+
+    <script>
+        function copiarLink() {
+            var link = document.getElementById("linkPedido");
+            link.select();
+            link.setSelectionRange(0, 99999); // Para mobile
+            document.execCommand("copy");
+            alert("Link copiado!");
+        }
+    </script>
+
+    <table class="table table-bordered mt-4">
+        <thead class="table-light">
+            <tr>
+                <th>Item</th>
+                <th>Quantidade</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in pedido.itens.all %}
+            <tr>
+                <td>{{ item.item.nome }}</td>
+                <td>{{ item.quantidade }}</td>
+                <td>R$ {{ item.quantidade|floatformat:2|add:"0"|floatformat:2|add:""|add:item.item.preco|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not pedido.retirado %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success mt-3">Confirmar Entrega</button>
+        </form>
+    {% else %}
+        <div class="alert alert-info mt-3">Este pedido já foi retirado.</div>
+    {% endif %}
+</div>
+{% endblock %}

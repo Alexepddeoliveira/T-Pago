@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% block title %}Carrinho{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Seu Carrinho</h2>
+
+{% if itens %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th>Quantidade</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in itens %}
+            <tr>
+                <td>{{ item.nome }}</td>
+                <td>{{ item.quantidade }}</td>
+                <td>R$ {{ item.subtotal }}</td>
+                <td>
+                    <a href="{% url 'remover_do_carrinho' item.id %}" class="btn btn-danger btn-sm">Remover</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h4>Total: R$ {{ total }}</h4>
+        <form method="post" action="{% url 'finalizar_pedido' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Finalizar Pedido</button>
+        </form>
+    </div>
+
+{% else %}
+    <div class="alert alert-info">
+        Seu carrinho está vazio.
+    </div>
+{% endif %}
+{% endblock %}

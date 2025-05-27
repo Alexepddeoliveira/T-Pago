@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% load form_extras %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm p-4">
+            <h2 class="mb-4 text-center">Entrar no Sistema</h2>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Erro:</strong> Usuário ou senha inválidos.
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Usuário</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Senha</label>
+                    {{ form.password|add_class:"form-control" }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+
+            <p class="mt-3 text-center">
+                Ainda não tem uma conta? <a href="{% url 'registro' %}">Cadastre-se aqui</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
