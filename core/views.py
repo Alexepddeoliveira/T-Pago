@@ -3,6 +3,7 @@ from .forms import ItemCardapioForm, EmpresaForm, RegistroForm, LoginForm
 from .models import Empresa, ItemCardapio, Pedido, ItemPedido
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.conf import settings 
 import qrcode
 from io import BytesIO
 import base64
@@ -126,7 +127,9 @@ def finalizar_pedido(request):
     request.session['carrinho'] = {}
     request.session['empresa_carrinho'] = None
 
-    qr = qrcode.make(f"http://127.0.0.1:8000/verificar/{pedido.codigo}/")
+    # ✅ Atualizado para usar a URL do ambiente (local ou produção)
+    url = f"{settings.SITE_URL}/verificar/{pedido.codigo}/"
+    qr = qrcode.make(url)
     buffer = BytesIO()
     qr.save(buffer)
     imagem_base64 = base64.b64encode(buffer.getvalue()).decode()
