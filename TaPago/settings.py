@@ -17,6 +17,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
+
 SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:8000")
 
 ALLOWED_HOSTS = ['.ngrok-free.app', 'localhost', '127.0.0.1','tapago-sogw.onrender.com','*']
@@ -135,3 +136,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/login/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
