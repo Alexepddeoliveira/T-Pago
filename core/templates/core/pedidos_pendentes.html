@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% block title %}Pedidos Pendentes{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2 class="fw-bold text-uppercase" style="color: #7D2AE8;">Pedidos Pendentes</h2>
+</div>
+
+<div class="list-group mt-4">
+    {% for pedido in pedidos %}
+        <div class="list-group-item shadow-sm mb-3" style="border-left: 5px solid #7D2AE8; border-radius: 8px;">
+            <p><strong>Empresa:</strong> {{ pedido.empresa.nome_fantasia }}</p>
+            <p><strong>Data:</strong> {{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
+            <p><strong>Status:</strong> Aguardando retirada</p>
+        </div>
+    {% empty %}
+        <p class="text-muted">Nenhum pedido pendente.</p>
+    {% endfor %}
+</div>
+{% endblock %}

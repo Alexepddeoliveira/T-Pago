@@ -7,6 +7,24 @@ from django.conf import settings
 import qrcode
 from io import BytesIO
 import base64
+from django.contrib.auth.decorators import user_passes_test
+
+def is_empresa(user):
+    return hasattr(user, 'empresa')
+
+def is_cliente(user):
+    return not hasattr(user, 'empresa')
+
+@login_required
+@user_passes_test(is_empresa)
+def ler_qr_code(request):
+    return render(request, 'core/ler_qr.html')
+
+@login_required
+@user_passes_test(is_cliente)
+def pedidos_pendentes_cliente(request):
+    pedidos = Pedido.objects.filter(cliente=request.user, retirado=False).order_by('-criado_em')
+    return render(request, 'core/pedidos_pendentes.html', {'pedidos': pedidos})
 
 @login_required
 def editar_empresa(request):
