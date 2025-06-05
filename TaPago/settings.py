@@ -17,7 +17,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
-ALLOWED_HOSTS = ['.ngrok-free.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.ngrok-free.app', 'localhost', '127.0.0.1','tapago-sogw.onrender.com','*']
 #ALTERE O LINK COMO O QUE FOR ABERTO QUANDO O SERVER FOR INICIADO
 CSRF_TRUSTED_ORIGINS = ['https://7f3f-179-218-19-11.ngrok-free.app']
 
