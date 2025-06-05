@@ -100,18 +100,20 @@ def redirecionar_login(request):
 def home(request):
     return render(request, 'core/home.html')
  
-@login_required
+@login_required(login_url='login')
 def verificar_pedido(request, codigo):
     try:
         pedido = Pedido.objects.get(codigo=codigo)
     except Pedido.DoesNotExist:
         return render(request, 'core/erro.html', {'mensagem': 'Pedido não encontrado.'})
 
-    try:
-        if request.user.empresa != pedido.empresa:
-            return render(request, 'core/erro.html', {'mensagem': 'Você não tem permissão para visualizar este pedido.'})
-    except Empresa.DoesNotExist:
+    # ⚠️ Verifica se o usuário tem uma empresa associada
+    if not hasattr(request.user, 'empresa'):
         return render(request, 'core/erro.html', {'mensagem': 'Apenas empresas podem acessar essa página.'})
+
+    # ⚠️ Verifica se a empresa é dona do pedido
+    if request.user.empresa != pedido.empresa:
+        return render(request, 'core/erro.html', {'mensagem': 'Você não tem permissão para visualizar este pedido.'})
 
     if request.method == 'POST':
         pedido.retirado = True
