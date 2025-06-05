@@ -1,3 +1,4 @@
+{% load filtros %}
 {% extends 'core/base.html' %}
 {% block title %}Verificação do Pedido{% endblock %}
 
@@ -41,7 +42,7 @@
             <tr>
                 <td>{{ item.item.nome }}</td>
                 <td>{{ item.quantidade }}</td>
-                <td>R$ {{ item.quantidade|floatformat:0|add:""|floatformat:2|floatformat:""|floatformat:2|stringformat:"f" }} </td>
+                <td>R$ {{ item.quantidade|multiply:item.preco_unitario|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </tbody>
