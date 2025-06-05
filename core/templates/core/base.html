@@ -115,7 +115,7 @@
         <div class="container-fluid d-flex align-items-center flex-wrap justify-content-between">
             <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'cliente_home' %}">
-                <img src="{% static 'img/T-Branco.png' %}" alt="TaPago Logo" width="50" height="50">
+                <img src="{% static 'core/img/T-Branco.png' %}" alt="TaPago Logo" width="50" height="50">
                 {% if user.is_authenticated and user.empresa %}
                     Empresas
                 {% elif user.is_authenticated %}
