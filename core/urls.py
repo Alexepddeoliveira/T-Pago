@@ -24,7 +24,8 @@ urlpatterns = [
     path('cliente/', views.cliente_home, name='cliente_home'),
     path('empresa/<int:empresa_id>/cardapio/', views.ver_cardapio, name='ver_cardapio'),
     path('item/<int:item_id>/detalhes/', views.detalhes_item, name='detalhes_item'),
-    path('pedidos-pendentes/', views.pedidos_pendentes_cliente, name='pedidos_pendentes'),
+    path('pedidos/pendentes/', views.pedidos_pendentes_cliente, name='pedidos_pendentes_cliente'),
+
     
     # Carrinho
     path('carrinho/', views.ver_carrinho, name='ver_carrinho'),
