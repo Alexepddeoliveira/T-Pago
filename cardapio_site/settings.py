@@ -9,9 +9,17 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+#configurar o ambiente 
+#Cd TaPago
+#venv\Scripts\activate
+#python manage.py runserver 0.0.0.0:8000
 
 from pathlib import Path
 import os
+
+ALLOWED_HOSTS = ['.ngrok-free.app', 'localhost', '127.0.0.1']
+#ALTERE O LINK COMO O QUE FOR ABERTO QUANDO O SERVER FOR INICIADO
+CSRF_TRUSTED_ORIGINS = ['https://7f3f-179-218-19-11.ngrok-free.app']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +33,6 @@ SECRET_KEY = 'django-insecure-_ec&@c)i$_-+&)mgn52e+2z9i2d=l*zo+eg^z-hc#v-^=-=gci
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 

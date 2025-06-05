@@ -2,42 +2,96 @@
 {% block title %}Carrinho{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Seu Carrinho</h2>
+<style>
+    .btn-remover {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .btn-finalizar {
+        background-color: #7D2AE8;
+        border: none;
+        padding: 10px 24px;
+    }
+
+    .btn-finalizar:hover {
+        background-color: #5e20b8;
+    }
+
+    .btn-voltar {
+        margin-bottom: 1rem;
+        color: #7D2AE8;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-voltar:hover {
+        text-decoration: underline;
+    }
+
+    .total-text {
+        color: #7D2AE8;
+        font-weight: bold;
+    }
+
+    .item-link {
+        text-decoration: none;
+        color: #212529;
+        font-weight: 500;
+    }
+
+    .item-link:hover {
+        color: #7D2AE8;
+    }
+</style>
+
+<div class="mb-4 text-center">
+    <h2 class="fw-bold text-uppercase" style="color: #7D2AE8;">Seu Carrinho</h2>
+</div>
+
+<a href="{% url 'cliente_home' %}" class="btn-voltar">← Voltar aos eventos</a>
 
 {% if itens %}
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Item</th>
-                <th>Quantidade</th>
-                <th>Subtotal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in itens %}
-            <tr>
-                <td>{{ item.nome }}</td>
-                <td>{{ item.quantidade }}</td>
-                <td>R$ {{ item.subtotal }}</td>
-                <td>
-                    <a href="{% url 'remover_do_carrinho' item.id %}" class="btn btn-danger btn-sm">Remover</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Item</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens %}
+                <tr>
+                    <td>
+                        <a href="{% url 'ver_cardapio' item.empresa.id %}" class="item-link">
+                            {{ item.nome }}
+                        </a>
+                    </td>
+                    <td>{{ item.quantidade }}</td>
+                    <td><strong>R$ {{ item.subtotal }}</strong></td>
+                    <td>
+                        <a href="{% url 'remover_do_carrinho' item.id %}" class="btn btn-outline-danger btn-remover">Remover</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4">
-        <h4>Total: R$ {{ total }}</h4>
+        <h4 class="total-text">Total: R$ {{ total }}</h4>
         <form method="post" action="{% url 'finalizar_pedido' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success">Finalizar Pedido</button>
+            <button type="submit" class="btn btn-finalizar text-white">Finalizar Pedido</button>
         </form>
     </div>
 
 {% else %}
-    <div class="alert alert-info">
+    <div class="alert alert-info text-center">
         Seu carrinho está vazio.
     </div>
 {% endif %}

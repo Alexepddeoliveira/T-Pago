@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -30,6 +32,8 @@ urlpatterns = [
     path('finalizar/', views.finalizar_pedido, name='finalizar_pedido'),
     path('verificar/<uuid:codigo>/', views.verificar_pedido, name='verificar_pedido'),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
+handler404 = 'core.views.erro_404'
+handler500 = 'core.views.erro_500'
+handler403 = 'core.views.erro_403'

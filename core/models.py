@@ -5,6 +5,7 @@ import uuid
 class Empresa(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nome_fantasia = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to='logos/', null=True, blank=True)  # NOVO CAMPO
 
     def __str__(self):
         return self.nome_fantasia

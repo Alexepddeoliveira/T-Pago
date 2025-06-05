@@ -1,24 +1,72 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Eventos{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Eventos disponíveis</h2>
+<style>
+    .evento-lista {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.2s;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
 
-<div class="row">
-    {% for empresa in empresas %}
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ empresa.nome_fantasia }}</h5>
-                    <a href="{% url 'ver_cardapio' empresa.id %}" class="btn text-white" style="background-color: #cb6cec;">
-                        Ver cardápio
-                    </a>
-                </div>
-            </div>
-        </div>
-    {% empty %}
-        <p>Nenhum evento cadastrado.</p>
-    {% endfor %}
+    .evento-lista:hover {
+        transform: translateY(-3px);
+        background-color: #f9f6ff;
+    }
+
+    .evento-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 1rem;
+    }
+
+    .evento-conteudo {
+        flex-grow: 1;
+    }
+
+    .evento-nome {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+
+    .evento-instrucao {
+        font-size: 0.85rem;
+        color: #999;
+    }
+</style>
+
+<div class="mb-4 text-center">
+    <h2 class="fw-bold text-uppercase" style="color: #7D2AE8;">Eventos Disponíveis</h2>
 </div>
+
+{% for empresa in empresas %}
+    <a href="{% url 'ver_cardapio' empresa.id %}" class="evento-lista">
+        {% if empresa.logo %}
+            <img src="{{ empresa.logo.url }}" alt="Logo {{ empresa.nome_fantasia }}" class="evento-img">
+        {% else %}
+            <img src="{% static 'img/default-evento.jpg' %}" alt="Sem imagem" class="evento-img">
+        {% endif %}
+
+        <div class="evento-conteudo">
+            <div class="evento-nome">{{ empresa.nome_fantasia }}</div>
+            <div class="evento-instrucao">Ver cardápio</div>
+        </div>
+    </a>
+{% empty %}
+    <p class="text-center text-muted">Nenhum evento cadastrado.</p>
+{% endfor %}
 {% endblock %}

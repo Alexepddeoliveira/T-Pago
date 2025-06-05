@@ -3,13 +3,27 @@
 {% block title %}Editar Item{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Editar Item: {{ item.nome }}</h2>
+<div class="d-flex justify-content-center">
+    <div class="card p-4 shadow" style="max-width: 700px; width: 100%; border-top: 5px solid #7D2AE8;">
+        <h2 class="text-center mb-4 fw-bold text-uppercase" style="color: #7D2AE8;">
+            Editar Item: {{ item.nome }}
+        </h2>
 
-<form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Salvar Alterações</button>
-</form>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
 
-<a href="{% url 'listar_itens' %}" class="btn btn-link mt-3">← Voltar à sua lista de itens</a>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'listar_itens' %}" class="btn btn-outline-secondary">
+                    ← Voltar
+                </a>
+                <button type="submit" class="btn" style="background-color: #7D2AE8; color: white;">
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

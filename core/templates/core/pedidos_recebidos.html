@@ -2,18 +2,18 @@
 {% block title %}Pedidos Recebidos{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">📬 Pedidos Recebidos</h2>
+<h2 class="mb-4 text-uppercase fw-bold" style="color: #7D2AE8;">📬 Pedidos Recebidos</h2>
 
 {% if pedidos %}
-    <div class="row">
+    <div class="row g-4">
         {% for pedido in pedidos %}
-            <div class="col-md-6 mb-4">
-                <div class="card shadow">
+            <div class="col-md-6">
+                <div class="card shadow-sm" style="border-top: 5px solid #7D2AE8;">
                     <div class="card-body">
-                        <h5 class="card-title mb-2">📦 Pedido #{{ pedido.id }}</h5>
+                        <h5 class="card-title mb-3">📦 Pedido #{{ pedido.id }}</h5>
                         <p><strong>Data:</strong> {{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
                         <p><strong>Itens:</strong></p>
-                        <ul class="mb-2">
+                        <ul class="mb-3">
                             {% for item in pedido.itens.all %}
                                 <li>{{ item.item.nome }} - Quantidade: {{ item.quantidade }}</li>
                             {% endfor %}
@@ -25,6 +25,6 @@
         {% endfor %}
     </div>
 {% else %}
-    <div class="alert alert-info">Nenhum pedido recebido.</div>
+    <div class="alert alert-info text-center">Nenhum pedido recebido.</div>
 {% endif %}
 {% endblock %}

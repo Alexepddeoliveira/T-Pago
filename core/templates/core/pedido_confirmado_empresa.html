@@ -7,7 +7,7 @@
         <div class="alert alert-success">Pedido marcado como <strong>retirado</strong> com sucesso.</div>
     {% endif %}
 
-    <h2 class="mb-4">Pedido de {{ pedido.cliente.username }}</h2>
+    <h2 class="mb-4 text-uppercase fw-bold" style="color: #7D2AE8;">Pedido de {{ pedido.cliente.username }}</h2>
     <p><strong>Data:</strong> {{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
     <p><strong>Código:</strong> {{ pedido.codigo }}</p>
 
@@ -41,7 +41,7 @@
             <tr>
                 <td>{{ item.item.nome }}</td>
                 <td>{{ item.quantidade }}</td>
-                <td>R$ {{ item.quantidade|floatformat:2|add:"0"|floatformat:2|add:""|add:item.item.preco|floatformat:2 }}</td>
+                <td>R$ {{ item.quantidade|floatformat:0|add:""|floatformat:2|floatformat:""|floatformat:2|stringformat:"f" }} </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -50,7 +50,9 @@
     {% if not pedido.retirado %}
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success mt-3">Confirmar Entrega</button>
+            <button type="submit" class="btn btn-success mt-3" style="background-color: #7D2AE8; border-color: #7D2AE8;">
+                Confirmar Entrega
+            </button>
         </form>
     {% else %}
         <div class="alert alert-info mt-3">Este pedido já foi retirado.</div>

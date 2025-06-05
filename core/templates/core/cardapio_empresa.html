@@ -1,41 +1,79 @@
 {% extends 'core/base.html' %}
-{% block title %}Cardápio{% endblock %}
+
+{% block title %}Cardápio - {{ empresa.nome_fantasia }}{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Cardápio do Evento {{ empresa.nome_fantasia }}</h2>
-<a href="{% url 'cliente_home' %}" class="btn btn-secondary mb-3">← Voltar para eventos</a>
+<div class="mb-4 text-center">
+    <h2 class="fw-bold text-uppercase" style="color: #7D2AE8;">{{ empresa.nome_fantasia }}</h2>
+    {% if not usuario_dono %}
+        <a href="{% url 'cliente_home' %}" class="btn btn-outline-secondary mt-2">← Voltar para eventos</a>
+    {% endif %}
+</div>
 
-<div class="row">
+{% if usuario_dono %}
+    <a href="{% url 'adicionar_item' %}" class="btn mb-3" style="background-color: #7D2AE8; color: white;">
+        Adicionar Novo Item
+    </a>
+{% endif %}
+
+<style>
+    .btn-padrao {
+        background-color: #7D2AE8;
+        border-color: #7D2AE8;
+        color: white !important;
+        min-width: 50px;
+        width: 50px;
+        height: 38px;
+        padding: 0;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
+    }
+    .btn-padrao:hover {
+        background-color: #5e20b8;
+        color: white !important;
+        text-decoration: none;
+    }
+    .btn-padrao svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+    }
+</style>
+
+<div class="list-group">
     {% for item in itens %}
-        <div class="col-md-4 d-flex align-items-stretch">
-            <div class="card shadow-sm d-flex flex-column" style="width: 100%; height: 450px;">
-                <!-- Área totalmente clicável -->
-                <a href="{% url 'detalhes_item' item.id %}" class="text-decoration-none text-dark d-block" style="height: 100%;">
-                    <div class="d-flex flex-column h-100">
-                        <img src="{{ item.imagem.url }}" class="card-img-top object-fit-cover" style="height: 200px; width: 100%;" alt="{{ item.nome }}">
-                        
-                        <div class="card-body d-flex flex-column justify-content-between" style="flex-grow: 1;">
-                            <div>
-                                <h5 class="card-title">{{ item.nome }}</h5>
-                                <p class="card-text" style="max-height: 60px; overflow: hidden; text-overflow: ellipsis;">
-                                    {{ item.descricao }}
-                                </p>
-                            </div>
-                            <div>
-                                <p class="card-text"><strong>R$ {{ item.preco }}</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Botão fora da área clicável -->
-                <div class="card-footer bg-white border-top-0 text-center">
-                    <a href="{% url 'adicionar_ao_carrinho' item.id %}" class="btn btn-outline-primary btn-sm">Adicionar ao carrinho</a>
+        <div class="list-group-item d-flex align-items-center shadow-sm mb-3" style="border-top: 5px solid #7D2AE8; border-radius: 8px;">
+            <a href="{% url 'detalhes_item' item.id %}" class="text-decoration-none text-dark d-flex align-items-center flex-grow-1">
+                <img src="{{ item.imagem.url }}" alt="{{ item.nome }}" style="width: 180px; height: 140px; object-fit: cover; border-radius: 8px; margin-right: 1rem;">
+                <div>
+                    <h5>{{ item.nome }}</h5>
+                    <p style="max-height: 70px; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem;">{{ item.descricao }}</p>
+                    <p class="fw-bold">R$ {{ item.preco }}</p>
                 </div>
+            </a>
+            <div class="ms-3">
+                {% if usuario_dono %}
+                    <a href="{% url 'editar_item' item.id %}" class="btn btn-padrao btn-sm" title="Editar item">
+                        <!-- Ícone de lápis para editar -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="none" stroke-width="0">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34a1.25 1.25 0 0 0 0-1.77l-2-2a1.25 1.25 0 0 0-1.77 0l-1.83 1.83 3.75 3.75 1.85-1.81z"/>
+                        </svg>
+                    </a>
+                {% else %}
+                    <a href="{% url 'adicionar_ao_carrinho' item.id %}" class="btn btn-padrao btn-sm" title="Adicionar ao carrinho">
+                        <!-- Ícone de carrinho de compras -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" stroke="none" stroke-width="0">
+                            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM7.16 14.26l.03-.12 1.5-4.46H19v-2h-11L5.21 3H2v2h2l3.6 7.59-1.35 2.44C6.16 15.11 6 15.55 6 16c0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.26-.24l-.01-.5z"/>
+                        </svg>
+                    </a>
+                {% endif %}
             </div>
         </div>
     {% empty %}
-        <p>Esse evento ainda não cadastrou itens no cardápio.</p>
+        <p class="text-muted">Nenhum item cadastrado.</p>
     {% endfor %}
 </div>
 {% endblock %}

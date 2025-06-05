@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow-sm p-4">
-            <h2 class="mb-4 text-center">Crie sua conta</h2>
+            <h2 class="mb-4 text-center text-uppercase fw-bold" style="color: #7D2AE8;">Crie sua conta</h2>
 
             {% if form.errors %}
                 <div class="alert alert-danger">
@@ -25,8 +25,9 @@
                 </div>
             {% endif %}
 
-            <form method="POST">
+            <form method="POST" novalidate>
                 {% csrf_token %}
+                
                 <div class="mb-3">
                     <label for="id_username" class="form-label">Usuário</label>
                     {{ form.username|add_class:"form-control" }}
@@ -42,16 +43,15 @@
                 <div class="mb-3">
                     <label class="form-label">Tipo de conta</label>
                     <div class="form-check">
-                        {{ form.tipo_usuario.0.tag }} <label class="form-check-label">Evento</label>
+                        {{ form.tipo_usuario.0.tag }} <label class="form-check-label">Empresa</label>
                     </div>
                     <div class="form-check">
                         {{ form.tipo_usuario.1.tag }} <label class="form-check-label">Cliente</label>
                     </div>
                 </div>
 
-                <!-- CAMPO CONDICIONAL DE NOME FANTASIA -->
                 <div class="mb-3" id="div-nome-empresa" style="display: none;">
-                    <label for="id_nome_fantasia" class="form-label">Nome do Evento</label>
+                    <label for="id_nome_fantasia" class="form-label">Nome da Loja</label>
                     {{ form.nome_fantasia|add_class:"form-control" }}
                 </div>
 
@@ -65,7 +65,6 @@
     </div>
 </div>
 
-<!-- JS para mostrar/esconder o campo "Nome do Evento" -->
 <script>
     const radios = document.getElementsByName('tipo_usuario');
     const nomeEmpresaDiv = document.getElementById('div-nome-empresa');
@@ -76,6 +75,6 @@
     }
 
     radios.forEach(r => r.addEventListener('change', toggleEmpresaField));
-    toggleEmpresaField();
+    window.addEventListener('DOMContentLoaded', toggleEmpresaField);
 </script>
 {% endblock %}

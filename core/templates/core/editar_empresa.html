@@ -2,13 +2,63 @@
 {% block title %}Editar Empresa{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Editar Informações da Empresa</h2>
+<style>
+    .card-edicao {
+        max-width: 700px;
+        margin: 0 auto;
+        border-top: 5px solid #7D2AE8;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        background-color: white;
+    }
 
-<form method="POST" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-</form>
+    .titulo-edicao {
+        color: #7D2AE8;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
 
-<a href="{% url 'listar_itens' %}" class="btn btn-link mt-3">← Voltar</a>
+    .logo-preview {
+        max-height: 160px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .btn-salvar {
+        background-color: #7D2AE8;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+    }
+
+    .btn-salvar:hover {
+        background-color: #5e20b8;
+    }
+</style>
+
+<div class="card-edicao">
+    <h2 class="titulo-edicao">Editar Informações da Empresa</h2>
+
+    {% if empresa.logo %}
+        <div class="mb-3 text-center">
+            <p class="mb-2 fw-semibold">Logo atual:</p>
+            <img src="{{ empresa.logo.url }}" alt="Logo atual" class="logo-preview mx-auto">
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'listar_itens' %}" class="btn btn-outline-secondary">← Voltar</a>
+            <button type="submit" class="btn btn-salvar">Salvar Alterações</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

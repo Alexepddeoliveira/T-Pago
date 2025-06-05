@@ -1,0 +1,15 @@
+1- Adcionar_item - onde as lojas podem adcionar itens ao seu cardápio 
+2-base - presente em todas as paginas 
+3- Cardapio_empresa - é onde o cliente pode ver os itens disponíveis no cardápio da loja
+4- carrinho - é o carrinho de compras do cliente 
+5- cliente_home -  é a pagina principal do cliente 
+6- detalhes_item - quando o cliente clica em um item essa pagina exibe os detalhes do item 
+7- editar_empresa - é a pagina que é aberta quando a empresa quer alterar suas características
+8- editar_item- é a pagina disponível a empresas quando ela clica pra editar um item em seu cardápio 
+9- erro - pagina exibida quando a algum erro do usuário 
+10- home - é apenas pagina de convenção apenas leva ao login 
+12-login - Pagina de login pra empresa e cliente onde tbm pode se criar um novo usuário
+13-pedido_confirmado_empresa - é a pagina que a empresa recebe ao escanear um qrcode de pedido
+14-pedido_confirmado_cliente - é a pagina que o cliente recebe ao finalizar uma compra 
+15-pedidos_recebidos- é a pagina onde a empresa pode ver os pedidos recebidos (pendentes ou nn)
+16- Registro - página onde são registradas novas contas 

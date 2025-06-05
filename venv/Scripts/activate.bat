@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\sergi\OneDrive\Documentos\ibmec-2025.1\Startups\VerçãoLocal\TaPago\venv
+set VIRTUAL_ENV=C:\Users\sergi\OneDrive\Documentos\ibmec-2025.1\Startups\VLFinal\TaPago\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

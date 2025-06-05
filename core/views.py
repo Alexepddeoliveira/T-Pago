@@ -1,18 +1,11 @@
-from django.shortcuts import render, redirect
-from .forms import ItemCardapioForm
-from .models import Empresa, ItemCardapio
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import ItemCardapioForm, EmpresaForm, RegistroForm, LoginForm
+from .models import Empresa, ItemCardapio, Pedido, ItemPedido
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
-from .forms import RegistroForm, LoginForm
 import qrcode
 from io import BytesIO
 import base64
-from .models import Pedido, ItemPedido
-from django.shortcuts import get_object_or_404, redirect, render
-from django.shortcuts import render, get_object_or_404
-from .forms import EmpresaForm
 
 @login_required
 def editar_empresa(request):
@@ -22,29 +15,44 @@ def editar_empresa(request):
         return render(request, 'core/erro.html', {'mensagem': 'Apenas empresas podem acessar essa página.'})
 
     if request.method == 'POST':
-        form = EmpresaForm(request.POST, instance=empresa)
+        form = EmpresaForm(request.POST, request.FILES, instance=empresa)
         if form.is_valid():
             form.save()
-            return redirect('listar_itens')  # ou qualquer página desejada
+            return redirect('listar_itens')
     else:
         form = EmpresaForm(instance=empresa)
-
-    return render(request, 'core/editar_empresa.html', {'form': form})
+    
+    return render(request, 'core/editar_empresa.html', {'form': form, 'empresa': empresa})
 
 def detalhes_item(request, item_id):
     item = get_object_or_404(ItemCardapio, id=item_id)
-    return render(request, 'core/detalhes_item.html', {'item': item})
 
+    usuario_dono = False
+    mostrar_botao = True
+
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'empresa'):
+            if item.empresa == request.user.empresa:
+                usuario_dono = True
+            mostrar_botao = False  # qualquer empresa não vê o botão
+
+    return render(request, 'core/detalhes_item.html', {
+        'item': item,
+        'usuario_dono': usuario_dono,
+        'mostrar_botao': mostrar_botao
+    })
+    
 @login_required
 def editar_item(request, item_id):
     item = get_object_or_404(ItemCardapio, id=item_id)
 
-    # Verifica se o usuário logado é da empresa dona do item
     try:
-        if request.user != item.empresa.user:
-            return render(request, 'core/erro.html', {'mensagem': 'Você não tem permissão para editar este item.'})
+        empresa = request.user.empresa
     except Empresa.DoesNotExist:
         return render(request, 'core/erro.html', {'mensagem': 'Apenas empresas podem editar itens.'})
+
+    if item.empresa != empresa:
+        return render(request, 'core/erro.html', {'mensagem': 'Você não tem permissão para editar este item.'})
 
     if request.method == 'POST':
         form = ItemCardapioForm(request.POST, request.FILES, instance=item)
@@ -67,7 +75,7 @@ def pedidos_recebidos(request):
     return render(request, 'core/pedidos_recebidos.html', {'pedidos': pedidos})
 
 def redirecionar_login(request):
-    return redirect('login')  # 'login' é o nome da URL do login
+    return redirect('login')
 
 def home(request):
     return render(request, 'core/home.html')
@@ -79,7 +87,6 @@ def verificar_pedido(request, codigo):
     except Pedido.DoesNotExist:
         return render(request, 'core/erro.html', {'mensagem': 'Pedido não encontrado.'})
 
-    # Verifica se o usuário é da empresa do pedido
     try:
         if request.user.empresa != pedido.empresa:
             return render(request, 'core/erro.html', {'mensagem': 'Você não tem permissão para visualizar este pedido.'})
@@ -116,11 +123,9 @@ def finalizar_pedido(request):
             preco_unitario=item.preco
         )
 
-    # Limpa o carrinho
     request.session['carrinho'] = {}
     request.session['empresa_carrinho'] = None
 
-    # Gera o QR code (baseado no código UUID do pedido)
     qr = qrcode.make(f"http://127.0.0.1:8000/verificar/{pedido.codigo}/")
     buffer = BytesIO()
     qr.save(buffer)
@@ -133,20 +138,26 @@ def finalizar_pedido(request):
 
 @login_required
 def adicionar_ao_carrinho(request, item_id):
-    item = ItemCardapio.objects.get(id=item_id)
+    item = get_object_or_404(ItemCardapio, id=item_id)
+
+    try:
+        empresa_usuario = request.user.empresa
+        if item.empresa != empresa_usuario:
+            return render(request, 'core/erro.html', {'mensagem': 'Empresas só podem adicionar itens do seu próprio cardápio.'})
+    except Empresa.DoesNotExist:
+        # Cliente normal pode adicionar normalmente
+        pass
+
     carrinho = request.session.get('carrinho', {})
 
-    # Se carrinho vazio, define a empresa
     if not carrinho:
         request.session['empresa_carrinho'] = item.empresa.id
 
-    # Verifica se item é da mesma empresa
     if item.empresa.id != request.session.get('empresa_carrinho'):
         return render(request, 'core/erro.html', {
             'mensagem': 'Você só pode adicionar itens de uma única empresa por vez.'
         })
 
-    # Adiciona item ao carrinho
     carrinho[str(item_id)] = carrinho.get(str(item_id), 0) + 1
     request.session['carrinho'] = carrinho
     return redirect('ver_carrinho')
@@ -158,7 +169,6 @@ def remover_do_carrinho(request, item_id):
         del carrinho[str(item_id)]
         request.session['carrinho'] = carrinho
 
-        # Se carrinho ficou vazio, remove a empresa
         if not carrinho:
             request.session.pop('empresa_carrinho', None)
 
@@ -181,13 +191,21 @@ def ver_carrinho(request):
 
 @login_required
 def ver_cardapio(request, empresa_id):
-    empresa = Empresa.objects.get(id=empresa_id)
+    empresa = get_object_or_404(Empresa, id=empresa_id)
     itens = ItemCardapio.objects.filter(empresa=empresa)
+    
+    usuario_dono = False
+    try:
+        if request.user.empresa == empresa:
+            usuario_dono = True
+    except Empresa.DoesNotExist:
+        pass
+
     return render(request, 'core/cardapio_empresa.html', {
-    'empresa': empresa,
-    'itens': itens,
-    'usuario_dono': empresa.user  # <--- isso que o template precisa!
-})
+        'empresa': empresa,
+        'itens': itens,
+        'usuario_dono': usuario_dono,
+    })
 
 @login_required
 def cliente_home(request):
@@ -208,7 +226,7 @@ def registro_view(request):
                 Empresa.objects.create(user=user, nome_fantasia=nome)
 
             login(request, user)
-            return redirect('listar_itens' if tipo == 'empresa' else 'cliente_home')  # <- corrigido aqui
+            return redirect('listar_itens' if tipo == 'empresa' else 'cliente_home')
     else:
         form = RegistroForm()
     return render(request, 'core/registro.html', {'form': form})
@@ -224,7 +242,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 try:
-                    user.empresa  # tenta acessar Empresa
+                    user.empresa
                     return redirect('listar_itens')
                 except Empresa.DoesNotExist:
                     return redirect('cliente_home')
@@ -266,11 +284,21 @@ def listar_itens(request):
 
     itens = ItemCardapio.objects.filter(empresa=empresa)
     pedidos_pendentes = Pedido.objects.filter(empresa=empresa, retirado=False)
-    
-    return render(request, 'core/listar_itens.html', {
+
+    return render(request, 'core/cardapio_empresa.html', {
+        'empresa': empresa,
         'itens': itens,
+        'usuario_dono': True,
         'pedidos_pendentes_count': pedidos_pendentes.count(),
         'pedidos_pendentes': pedidos_pendentes
     })
 
+# Handlers para erros
+def erro_404(request, exception):
+    return render(request, 'core/erro.html', {'mensagem': 'Página não encontrada.'}, status=404)
 
+def erro_500(request):
+    return render(request, 'core/erro.html', {'mensagem': 'Erro interno no servidor.'}, status=500)
+
+def erro_403(request, exception):
+    return render(request, 'core/erro.html', {'mensagem': 'Acesso proibido.'}, status=403)

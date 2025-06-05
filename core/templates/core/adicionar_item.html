@@ -3,11 +3,27 @@
 {% block title %}Adicionar Item{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Adicionar Novo Item ao Cardápio do Evento</h2>
-<form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Salvar</button>
-</form>
-<a href="{% url 'listar_itens' %}" class="btn btn-link mt-3">Ver Itens</a>
+<div class="d-flex justify-content-center">
+    <div class="card p-4 shadow" style="max-width: 700px; width: 100%; border-top: 5px solid #7D2AE8;">
+        <h2 class="text-center mb-4 fw-bold text-uppercase" style="color: #7D2AE8;">
+            Adicionar Item ao Cardápio
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.as_p }}
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'listar_itens' %}" class="btn btn-outline-secondary">
+                    ← Voltar
+                </a>
+                <button type="submit" class="btn text-white px-4" style="background-color: #7D2AE8;">
+                    Salvar Item
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

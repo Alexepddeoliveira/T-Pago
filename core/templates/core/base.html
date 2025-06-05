@@ -7,89 +7,178 @@
     <link rel="icon" href="{% static 'ta-pago-logo.ico' %}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Estilo customizado -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
-        .custom-navbar {
-            background-color: rgb(35, 3, 46) !important;
+        :root {
+            --roxo: #7D2AE8;
+            --roxo-escuro: #4B0082;
+            --preto: #121212;
+            --branco: #ffffff;
+            --cinza-claro: #f3f3f3;
         }
 
-        .usuario-nome-grande {
-            font-size: 1.2rem;
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cinza-claro);
+            color: var(--preto);
+        }
+
+        .custom-navbar {
+            background-color: var(--roxo-escuro) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand img {
+            border-radius: 5px;
+        }
+
+        .nav-link {
+            color: var(--branco) !important;
             font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--cinza-claro) !important;
+        }
+
+        .dropdown-menu {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--roxo);
+            color: var(--branco);
+        }
+
+        .btn-carrinho {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn-carrinho svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .btn-success {
+            background-color: var(--roxo);
+            border-color: var(--roxo);
+        }
+
+        .btn-success:hover {
+            background-color: var(--roxo-escuro);
+            border-color: var(--roxo-escuro);
+        }
+
+        .container {
+            background-color: var(--branco);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .nome-usuario {
+            color: #d3d3d3;
+            font-weight: 500;
+            font-size: 1rem;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.75rem;
+            color: var(--branco);
+            display: inline-block !important;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28 255, 255, 255, 1 %29)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
     </style>
 </head>
 <body>
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
-        <div class="container-fluid">
+    <nav class="navbar navbar-dark custom-navbar">
+        <div class="container-fluid d-flex align-items-center flex-wrap justify-content-between">
             <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'cliente_home' %}">
-                <img src="{% static 'img/ta-pago-logo.png' %}" alt="TaPago Logo" width="30" height="30" class="d-inline-block align-top">
-                
+                <img src="{% static 'img/T-branco.png' %}" alt="TaPago Logo" width="50" height="50">
                 {% if user.is_authenticated and user.empresa %}
-                    Meu Cardápio
+                    Empresas
                 {% elif user.is_authenticated %}
-                    Eventos
+                   Home
                 {% else %}
-                    Cardápio
+                    Home
                 {% endif %}
             </a>
 
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user.is_authenticated and user.empresa %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'listar_itens' %}">Meus Itens</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'adicionar_item' %}">Adicionar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'pedidos_recebidos' %}">📬 Caixa de Pedidos</a>
-                        </li>
-                    {% endif %}
-                </ul>
+            <!-- Nome + Carrinho + Menu -->
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                    <span class="nome-usuario">
+                        {% if user.empresa %}
+                            {{ user.empresa.nome_fantasia }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </span>
 
-                <!-- PERFIL DROPDOWN -->
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle usuario-nome-grande" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {% if user.empresa %}
-                                    {{ user.empresa.nome_fantasia }}
-                                {% else %}
-                                    {{ user.username }}
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
-                                {% if user.empresa %}
-                                    <li><a class="dropdown-item" href="{% url 'listar_itens' %}">Meus Itens</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'pedidos_recebidos' %}">Pedidos Recebidos</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'editar_empresa' %}">Editar Perfil</a></li>
-                                {% else %}
-                                    <li><a class="dropdown-item" href="{% url 'ver_carrinho' %}">Meu Carrinho</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'cliente_home' %}">Empresas</a></li>
-                                {% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Sair</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Entrar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'registro' %}" class="btn btn-success btn-sm">Cadastrar</a>
-                        </li>
+                    {% if not user.empresa %}
+                        <a href="{% url 'ver_carrinho' %}" class="btn-carrinho" title="Meu Carrinho">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM7.16 14.26l.03-.12 1.5-4.46H19v-2h-11L5.21 3H2v2h2l3.6 7.59-1.35 2.44C6.16 15.11 6 15.55 6 16c0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.26-.24l-.01-.5z"/>
+                            </svg>
+                        </a>
                     {% endif %}
-                </ul>
+                {% endif %}
+
+                <!-- Botão de menu -->
+                <div class="dropdown">
+                    <button class="navbar-toggler dropdown-toggle show" type="button" id="menuResponsivo" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="white" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.5 12.5a.5.5 0 010-1h13a.5.5 0 010 1h-13zm0-4a.5.5 0 010-1h13a.5.5 0 010 1h-13zm0-4a.5.5 0 010-1h13a.5.5 0 010 1h-13z"/>
+                        </svg>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuResponsivo">
+                        {% if user.is_authenticated and user.empresa %}
+                            <li><a class="dropdown-item" href="{% url 'listar_itens' %}">Meus Itens</a></li>
+                            <li><a class="dropdown-item" href="{% url 'adicionar_item' %}">Adicionar</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pedidos_recebidos' %}">Pedidos Recebidos</a></li>
+                            <li><a class="dropdown-item" href="{% url 'editar_empresa' %}">Editar Perfil</a></li>
+                        {% elif user.is_authenticated %}
+                            <li><a class="dropdown-item" href="{% url 'ver_carrinho' %}">Meu Carrinho</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cliente_home' %}">Empresas</a></li>
+                        {% endif %}
+
+                        {% if user.is_authenticated %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Sair</a></li>
+                        {% else %}
+                            <li><a class="dropdown-item" href="{% url 'login' %}">Entrar</a></li>
+                            <li><a class="dropdown-item" href="{% url 'registro' %}">Cadastrar</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- CONTEÚDO -->
-    <div class="container mt-4">
+    <div class="container">
         {% block content %}{% endblock %}
     </div>
 
