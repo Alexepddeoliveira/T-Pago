@@ -1,5 +1,5 @@
 """
-WSGI config for cardapio_site project.
+WSGI config for TaPago project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
